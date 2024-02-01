@@ -109,7 +109,6 @@ Following the orchestration of a seamlessly flowing RESTful API, my trajectory l
 In the BookCatalog API Project, as vividly demonstrated in the image below, I have strategically incorporated the AuthorizationContext. This addition serves the purpose of enabling user creation from the API into the database, employing the potent code-first technique. 
 
 ## Migration Authentication Entities
-In our determined pursuit of this objective, the installation of the subsequent NuGet Packages becomes imperative. It's noteworthy that I am utilizing PostgreSQL in this context.
 
 **Microsoft.EntityFrameworkCore**
 
@@ -191,23 +190,6 @@ namespace BookCatalog.Common.Helper
     }
 }
 ```
-
-The moment has come to migrate the authentication entities to PostgreSQL and generate corresponding tables. You can choose between utilizing the 'Package Manager Console' or 'Developer PowerShell.' To proceed, right-click on the intended project and select the 'Open Terminal' option.
-
-
-### Migration can be initiated by executing the following command:
-
-```ruby
-dotnet ef migrations add 'AuthFirstMigration'
-```
-
-![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/0d6c6edb-a108-4694-aa7c-8c5a74866ea8)
-
-Upon executing this command, the system will generate a 'Migrations' folder within the JWTAuth project, containing the necessary migration classes.
-
-![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/d1c0fec6-6483-4c5e-80b5-b7e4fa07ee0b)
-
-By utilizing the command below, our database containing authentication tables will be created within PostgreSQL.
 
 ```ruby
 dotnet ef database update -c AuthorizeContexts
@@ -496,9 +478,9 @@ As it shown in the picture Swagger appears like this.
 
 ![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/a29e6e05-de9b-4c63-bbb9-cb1f0a14b09b)
 
-Should you attempt to access the methods within this page without generating a valid token, an unauthorized error will be encountered. This security measure guarantees that only authorized users can interact with the Survey's methods.
+Should you attempt to access the methods within this page without generating a valid token, an unauthorized error will be encountered. This security measure guarantees that only authorized users can interact with the Book Catalog methods.
 
-![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/e6ff2d41-3389-488c-a807-7bb5c50458a4)
+![image](https://raw.githubusercontent.com/gregfox0681/BookCatalog/master/Images/token.png)
 
 I copied the generated token and entered it into the designated input area within the popup page, accessed by clicking on the "Authorize" button.
 
@@ -508,7 +490,7 @@ I copied the generated token and entered it into the designated input area withi
 
 Click on **Authorize** button and then close the popup.
 
-Now, you can attempt to execute the methods within the SurveyController. By clicking on the respective SurveyController method, if your token is valid, the method will return the expected result values. Conversely, if the token is invalid, an "Unauthorized" error will be encountered.
+Now, you can attempt to execute the methods within the LibrariesController. By clicking on the respective LibrariesController method, if your token is valid, the method will return the expected result values. Conversely, if the token is invalid, an "Unauthorized" error will be encountered.
 
 ![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/1fb7ff0d-75ea-4556-b5ba-d007881fa6ca)
 
