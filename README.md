@@ -486,7 +486,7 @@ I copied the generated token and entered it into the designated input area withi
 
 ![image](https://raw.githubusercontent.com/gregfox0681/BookCatalog/master/Images/getall.png)
 
-![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/d9cf3966-d6ff-4752-a242-3c21705d38e2)
+![image](https://raw.githubusercontent.com/gregfox0681/BookCatalog/master/Images/Authorizations.png)
 
 Click on **Authorize** button and then close the popup.
 
@@ -496,7 +496,7 @@ Now, you can attempt to execute the methods within the LibrariesController. By c
 
 In certain scenarios, even after meticulously completing all the requisite steps within the Swagger page, including the generation of tokens in the authorization segment, an unexpected hurdle may arise during the execution of Get/Post programs. At this juncture, the program endeavors to validate the token, only to be met with an exception, which is visually depicted in the subsequent image.
 
-![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/a7e87f96-4395-48ea-904c-ba463d995e49)
+![image](https://raw.githubusercontent.com/gregfox0681/BookCatalog/master/Images/UnauthorizeAccess.png)
 
 In certain instances, a crucial element was absent: the System.IdentityModel.Tokens.Jwt NuGet package. Astonishingly, despite a seamless compilation and execution process, the API testing phase revealed a significant hiccup in the form of an 'invalid token' error. Remarkably, the simple installation of the System.IdentityModel.Tokens.Jwt package breath life into the solution, seamlessly rectifying the issue without necessitating a single alteration to the codebase. You can also refere to following link to get more information.
 https://stackoverflow.com/a/73126849/2468916
