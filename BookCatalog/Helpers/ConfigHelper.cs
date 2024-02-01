@@ -13,20 +13,14 @@ namespace BookCatalog.Helpers
         public static void ConfigureService(WebApplicationBuilder builder)
         {
             var serviceProvider = builder.Services.AddOptions().Configure<AppSettings>(builder.Configuration.GetSection("AppSettings")).BuildServiceProvider();
-
             // Set the value in AppSettings
             var appSettings = serviceProvider.GetRequiredService<IOptions<AppSettings>>().Value;
-
-            // Add your DbContext and other services here
-            //builder.Services.AddDbContext<AuthorizeContexts>(options =>
-            //                options.UseSqlServer(appSettings.ConnectionString));
+            // Add your DbContext and other services here        
             builder.Services.AddDbContext<LibraryContext>(options =>
                            options.UseSqlServer(appSettings.ConnectionString));
             builder.Services.AddScoped<IConnectionStringProvider, ConnectionStringProvider>();           
-            serviceProvider.Dispose();
-            ///builder.Services.AddScoped<ILibraryRepository<BookDTO>, LibraryRepository>();
+            serviceProvider.Dispose();           
             builder.Services.UseOneTransactionPerHttpCall(appSettings);
-
         }
     }
 }

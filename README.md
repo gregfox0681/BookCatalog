@@ -57,7 +57,7 @@ Here's a high-level example of how JWT authentication is configured in ASP.NET C
 Within the realm of the API, I am poised to infuse my Authorization Model, injecting a robust layer of control. Notably, for this project, I have introduced a straightforward User Entity. It's worth acknowledging that in a genuine project, the AspNetUser Authentication entities would naturally come to the fore.
 
 Following the orchestration of a seamlessly flowing RESTful API, my trajectory leads me to introduce a ClassLibrary project, dedicated to crafting the Data Layer project. Within this domain, the canvas becomes adorned with Entities and Repositories, gracefully complemented by the UnitOfWorkFilter class, a component whose significance I shall demystify in an upcoming article. The final touch is the Context, weaving together the fabric of this data-driven symphony.
-In the JWTAuth API Project, as vividly demonstrated in the image below, I have strategically incorporated the AuthorizationContext. This addition serves the purpose of enabling user creation from the API into the database, employing the potent code-first technique. 
+In the BookCatalog API Project, as vividly demonstrated in the image below, I have strategically incorporated the AuthorizationContext. This addition serves the purpose of enabling user creation from the API into the database, employing the potent code-first technique. 
 
 1. Token Generation:
 JWT tokens are created and signed by the server.
@@ -106,7 +106,7 @@ Limit the amount of sensitive information stored in the token.
 Within the realm of the API, I am poised to infuse my Authorization Model, injecting a robust layer of control. Notably, for this project, I have introduced a straightforward User Entity. It's worth acknowledging that in a genuine project, the AspNetUser Authentication entities would naturally come to the fore.
 
 Following the orchestration of a seamlessly flowing RESTful API, my trajectory leads me to introduce a ClassLibrary project, dedicated to crafting the Data Layer project. Within this domain, the canvas becomes adorned with Entities and Repositories, gracefully complemented by the UnitOfWorkFilter class. The final touch is the Context, weaving together the fabric of this data-driven symphony.
-In the JWTAuth API Project, as vividly demonstrated in the image below, I have strategically incorporated the AuthorizationContext. This addition serves the purpose of enabling user creation from the API into the database, employing the potent code-first technique. 
+In the BookCatalog API Project, as vividly demonstrated in the image below, I have strategically incorporated the AuthorizationContext. This addition serves the purpose of enabling user creation from the API into the database, employing the potent code-first technique. 
 
 ## Migration Authentication Entities
 In our determined pursuit of this objective, the installation of the subsequent NuGet Packages becomes imperative. It's noteworthy that I am utilizing PostgreSQL in this context.
@@ -115,25 +115,17 @@ In our determined pursuit of this objective, the installation of the subsequent 
 
 **Microsoft.EntityFrameworkCore.Design**
 
-**Npgsql.EntityFrameworkCore.PostgreSQL**
-
 **Microsoft.IdentityModel.Tokens**
 
 **Microsoft.AspNetCore.Authentication.JwtBearer**
 
 
-For making first migration for authentication entities we must put our PostgreSQL connection string inside appsettings.json as below
+For making first migration for authentication entities we must put our MSSSQL connection string inside appsettings.json as below
 ```ruby
-"ConnectionStrings": {
-    "SurveyConnectionString": "Host=localhost;Port=5432;Database=SurveyAuth;Username=postgres;Password=*****;"
+"AppSettings": {   
+    "ConnectionString": "Data Source=.;Initial Catalog=LibraryDB;Integrated Security=True;Trusted_Connection=True;TrustServerCertificate=True;"
   },
-"AppSettings": {
-    "SomeSetting": "SomeValue",
-    "AnotherSetting": "AnotherValue",
-    "ConnectionString": "Host=localhost;Port=5432;Database=SurveyAuth;Username=postgres;Password=*****;"
-  },
-```
-  
+```  
 In the subsequent steps, as we proceed with the installation of the required NuGet packages and input the necessary requirements into the appsettings.json file, we will also incorporate Dependency Injection for our DataContext.
 To enhance the readability of the program code, I've organized the content into separate classes and integrated them into Program.cs. The structure of my project is as follows:
 
@@ -147,115 +139,31 @@ ConfigHelper.cs
 Is a provider class designed to facilitate the addition of DbContext and other services through Dependency Injection (DI)
 
 ```ruby
-using JWTAuth.Extensions;
-using JWTAuth.Services;
+using BookCatalog.Extensions;
+using BookCatalog.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace JWTAuth.Helpers
+namespace BookCatalog.Helpers
 {
     public class ConfigHelper
     {
         public static void ConfigureService(WebApplicationBuilder builder)
         {
             var serviceProvider = builder.Services.AddOptions().Configure<AppSettings>(builder.Configuration.GetSection("AppSettings")).BuildServiceProvider();
-
             // Set the value in AppSettings
             var appSettings = serviceProvider.GetRequiredService<IOptions<AppSettings>>().Value;
-
-            // Add your DbContext and other services here
-            builder.Services.AddDbContext<AuthorizeContexts>(options =>
-                            options.UseNpgsql(appSettings.ConnectionString));
-
-            builder.Services.AddScoped<IConnectionStringProvider, ConnectionStringProvider>();
-
-            serviceProvider.Dispose();
-            PostgreSqlBootstrap.Initialize();
-
-            // After the creation of SurveyRepo in the DataLayer project, it is essential to add this line
-            builder.Services.AddScoped<ISurveyRepo, SurveyRepo>();
+            // Add your DbContext and other services here        
+            builder.Services.AddDbContext<LibraryContext>(options =>
+                           options.UseSqlServer(appSettings.ConnectionString));
+            builder.Services.AddScoped<IConnectionStringProvider, ConnectionStringProvider>();           
+            serviceProvider.Dispose();           
             builder.Services.UseOneTransactionPerHttpCall(appSettings);
-
         }
     }
 }
 ```
 
-### Services Folder
-Houses all the custom services required for Dependency Injection (DI) within the solution.
-
-IConnectionStringProvider.cs
-```ruby
-namespace JWTAuth.Services
-{
-    public interface IConnectionStringProvider
-    {
-        string GetConnectionString();
-    }
-}
-```
-
-ConnectionStringProvider.cs
-```ruby
-namespace JWTAuth.Services
-{
-    public class ConnectionStringProvider : IConnectionStringProvider
-    {
-        private readonly IConfiguration _configuration;
-
-        public ConnectionStringProvider(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-
-        public string GetConnectionString()
-        {
-            var connectionString = _configuration.GetConnectionString("SurveyConnectionString");
-            return connectionString;
-        }
-    }
-}
-```
-
-### Extensions Folder
-Includes extension classes.
-ServiceCollectionExtensions.cs
-This extension for the service collection manages the state of connections and transactions per HttpCall for PostgreSQL.
-
-```ruby
-using JWTAuth.Helpers;
-using JWTAuth.Services;
-using Npgsql;
-using System.Data;
-
-namespace JWTAuth.Extensions
-{
-    public static class ServiceCollectionExtensions
-    {
-        public static void UseOneTransactionPerHttpCall(this IServiceCollection serviceCollection, AppSettings _appSettings, IsolationLevel level = IsolationLevel.ReadUncommitted)
-        {
-
-            serviceCollection.AddScoped<IDbTransaction>(serviceProvider =>
-            {
-                var connectionStringProvider = serviceProvider.GetService<IConnectionStringProvider>();
-                var connection = new NpgsqlConnection(_appSettings.ConnectionString);
-            
-                if (connection.State != ConnectionState.Open)
-                    connection.Open();
-            
-                return connection.BeginTransaction(level);
-            });
-            
-            serviceCollection.AddScoped(typeof(UnitOfWorkFilter), typeof(UnitOfWorkFilter));
-            
-            serviceCollection.AddMvc(setup =>
-            {
-                setup.Filters.AddService<UnitOfWorkFilter>(1);
-            });
-        }
-    }
-}
-```
 
 Invoking ConfigHelper.ConfigureService(builder) within Program.cs
 
@@ -264,8 +172,8 @@ var builder = WebApplication.CreateBuilder(args);
 ConfigHelper.ConfigureService(builder);
 ```
 
-## JWTAuth.Common Project
-Furthermore, we require an AppSettings.cs file, which we will place within a new class liberary project named JWTAuth.Common. This project serves as a repository for all common classes.
+## BookCatalog.Common Project
+Furthermore, we require an AppSettings.cs file, which we will place within a new class liberary project named BookCatalog.Common. This project serves as a repository for all common classes.
 
 ### Helpers Folder
 Contains various helper classes.
@@ -273,7 +181,7 @@ AppSettings.cs
 This entity serves as a container for carrying configuration information throughout the solution.
 
 ```ruby
-namespace JWTAuth.Common.Helper
+namespace BookCatalog.Common.Helper
 {
     public class AppSettings
     {
@@ -313,9 +221,9 @@ For implementing JWT, the initial step involves adding JWTSecurityToken to the a
 ```ruby
 "JwtSecurityToken": {
     "Key": "K17T6p+mYlBuIll6EOQDUmAdM6xmzeHOpE+O35zsAvw=",
-    "Issuer": "JWTAuthServer",
-    "Audience": "JWTAuthClient",
-    "Subject": "JWTAuthToken"
+    "Issuer": "BookCatalogServer",
+    "Audience": "BookCatalogClient",
+    "Subject": "BookCatalogToken"
   },
 ```
 
@@ -398,7 +306,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace JWTAuth.Helpers
+namespace BookCatalog.Helpers
 {
     public class AuthenticationHelper
     {
@@ -442,7 +350,7 @@ Additionally, I have included my custom class for configuring Swagger. This ensu
 ```ruby
 using Microsoft.OpenApi.Models;
 
-namespace JWTAuth.Helpers
+namespace BookCatalog.Helpers
 {
     public class SwaggerHelper
     {
@@ -500,7 +408,7 @@ After completing the setup and configuration requirements, my next step involves
 The code implementation for this class could resemble the example below, or it may be implemented using alternative approaches based on specific requirements: 
 
 ```ruby
-using JWTAuth.Authorization.Model.Entities;
+using BookCatalog.Authorization.Model.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -508,7 +416,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace JWTAuth.Controllers
+namespace BookCatalog.Controllers
 {
     [Route("api/token")]
     [ApiController]
@@ -583,56 +491,7 @@ namespace JWTAuth.Controllers
 }
 ```
 
-Furthermore, I am in the process of crafting a SurveyController. This controller is intended to facilitate the testing of our established objectives. To ensure controlled access to its members, it is imperative to place the **[Authorize]** attribute above the controller. This step validates the token's validity before granting access.
-
-```ruby
-using JWTAuth.Data.Repositories.GeneralRepositories;
-using JWTAuth.Data.Repositories;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using JWTAuth.Data.Entities;
-
-namespace JWTAuth.Controllers
-{
-    [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SurveyController : Controller
-    {
-        private readonly ISurveyRepo _surveyRepo;
-        private readonly ILogger<SurveyController> _logger;
-        private readonly UnitOfWorkFilter _uow;
-
-
-        public SurveyController(ILogger<SurveyController> logger,
-                                UnitOfWorkFilter unitOfWork,
-                                ISurveyRepo surveyRepo)
-        {
-            _logger = logger;
-            _uow = unitOfWork;
-            _surveyRepo = surveyRepo;
-        }
-
-        // GET ALL: api/<SurveyController>
-        [HttpGet]
-        public async Task<IEnumerable<Survey>?> GetAll()
-        {
-            var surveys = await _surveyRepo.GetAllAsync();
-            return surveys;
-        }
-        
-        // GET api/<SurveyController>/5
-        [HttpGet("{id}")]
-        public async Task<Survey?> Get(int id)
-        {
-            var survey = await _surveyRepo.GetAsync(1);
-            return survey;
-        }
-   }
-}
-```
-
-Build your solution and run JWTAuth RESTful Api project.
+Build your solution and run BookCatalog RESTful Api project.
 As it shown in the picture Swagger appears like this.
 
 ![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/a29e6e05-de9b-4c63-bbb9-cb1f0a14b09b)
