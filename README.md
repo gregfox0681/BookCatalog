@@ -99,9 +99,9 @@ Limit the amount of sensitive information stored in the token.
 
 ### Here's a high-level example of how JWT authentication is configured in ASP.NET Core
 
-![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/4a3c1f35-1b78-42c7-a25d-1b95f039366e)
+![image](https://raw.githubusercontent.com/gregfox0681/BookCatalog/master/Images/NewProject.png)
 
-![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/7bd95a97-8ae7-4604-9133-6842370efd80)
+![image](https://raw.githubusercontent.com/gregfox0681/BookCatalog/master/Images/Additional.png)
 
 Within the realm of the API, I am poised to infuse my Authorization Model, injecting a robust layer of control. Notably, for this project, I have introduced a straightforward User Entity. It's worth acknowledging that in a genuine project, the AspNetUser Authentication entities would naturally come to the fore.
 
