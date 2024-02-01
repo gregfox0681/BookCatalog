@@ -128,7 +128,7 @@ For making first migration for authentication entities we must put our MSSSQL co
 In the subsequent steps, as we proceed with the installation of the required NuGet packages and input the necessary requirements into the appsettings.json file, we will also incorporate Dependency Injection for our DataContext.
 To enhance the readability of the program code, I've organized the content into separate classes and integrated them into Program.cs. The structure of my project is as follows:
 
-![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/66c9416d-fdc9-4e90-8723-5b518965b4d5)
+![image](https://raw.githubusercontent.com/gregfox0681/BookCatalog/master/Images/dependencies.png)
 
 
 ## Helpers Folder
@@ -476,7 +476,7 @@ namespace BookCatalog.Controllers
 Build your solution and run BookCatalog RESTful Api project.
 As it shown in the picture Swagger appears like this.
 
-![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/a29e6e05-de9b-4c63-bbb9-cb1f0a14b09b)
+![image](https://raw.githubusercontent.com/gregfox0681/BookCatalog/master/Images/apilist.png)
 
 Should you attempt to access the methods within this page without generating a valid token, an unauthorized error will be encountered. This security measure guarantees that only authorized users can interact with the Book Catalog methods.
 
@@ -484,7 +484,7 @@ Should you attempt to access the methods within this page without generating a v
 
 I copied the generated token and entered it into the designated input area within the popup page, accessed by clicking on the "Authorize" button.
 
-![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/d8951dce-b47c-4ec1-a154-951c47f477ea)
+![image](https://raw.githubusercontent.com/gregfox0681/BookCatalog/master/Images/getall.png)
 
 ![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/d9cf3966-d6ff-4752-a242-3c21705d38e2)
 
@@ -492,7 +492,7 @@ Click on **Authorize** button and then close the popup.
 
 Now, you can attempt to execute the methods within the LibrariesController. By clicking on the respective LibrariesController method, if your token is valid, the method will return the expected result values. Conversely, if the token is invalid, an "Unauthorized" error will be encountered.
 
-![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/1fb7ff0d-75ea-4556-b5ba-d007881fa6ca)
+![image](https://raw.githubusercontent.com/gregfox0681/BookCatalog/master/Images/getall.png)
 
 In certain scenarios, even after meticulously completing all the requisite steps within the Swagger page, including the generation of tokens in the authorization segment, an unexpected hurdle may arise during the execution of Get/Post programs. At this juncture, the program endeavors to validate the token, only to be met with an exception, which is visually depicted in the subsequent image.
 
