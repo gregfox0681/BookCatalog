@@ -263,11 +263,11 @@ With this configuration in place, you can effortlessly generate new encryption k
 
 Windows Power Shell
 
-![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/80a29ae2-5615-4950-98e6-e16e3e0c1c3d)
+![image](https://raw.githubusercontent.com/gregfox0681/BookCatalog/master/Images/PowerShell.png)
 
 Command Prompt
 
-![image](https://github.com/farzadniknam/JWTAuth/assets/45637787/c4291d3e-6fe3-422c-970b-a7bbda964e44)
+![image](https://raw.githubusercontent.com/gregfox0681/BookCatalog/master/Images/cmd.png)
 
 Through the utilization of OpenSSL, you have the capability to generate various types of encryption keys.
 You have the flexibility to generate your new encryption key using any preferred method. All you need to do is replace your code with the value of the JwtSecurityToken's "Key" property in the appsettings.json file.
