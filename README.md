@@ -195,7 +195,7 @@ namespace BookCatalog.Common.Helper
 dotnet ef database update -c AuthorizeContexts
 ```
 
-As previously mentioned, I intend to create a class library project for my DataLayer, housing main entities, the Context, and repositories. Accordingly, I will generate the 'Survey Entity' and other pertinent elements within this project. Subsequently, I will employ a similar technique to the one utilized for migrating authentication entities to our PostgreSQL database.
+As previously mentioned, I intend to create a class library project for my DataLayer, housing main entities, the Context, and repositories. Accordingly, I will generate the 'BookCatalog Entity' and other pertinent elements within this project. Subsequently, I will employ a similar technique to the one utilized for migrating authentication entities to our MSSSQL database.
 
 ## Demystifying JWT Configuration and Utilization
 For implementing JWT, the initial step involves adding JWTSecurityToken to the appsettings.json file, as depicted below:
